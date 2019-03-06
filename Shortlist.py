@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Mar  4 22:28:36 2019
-@author: JEOOOOOOOOOOOOSH
-"""
-
 import requests
 from bs4 import BeautifulSoup
 import xlsxwriter
