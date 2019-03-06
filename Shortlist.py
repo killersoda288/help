@@ -1,12 +1,17 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Mar  4 22:28:36 2019
+@author: JEOOOOOOOOOOOOSH
+"""
 
 import requests
 from bs4 import BeautifulSoup
 import xlsxwriter
 
 
-def save_html(html, path):
-    with open(path, 'wb') as f:
-        f.write(html)
+def get_soup(url):
+    r = requests.get(url)
+    return BeautifulSoup(r.content, 'html.parser')
 
 
 def open_html(path):
@@ -34,9 +39,7 @@ while True:
         break
 
 print('fetching page...')
-r = requests.get(start_url)
-save_html(r.content, 'page')
-soup = BeautifulSoup(open_html('page'), 'html.parser')
+soup = get_soup(start_url)
 
 while True:
     min_rev_num = input('Min Reviews for property: ')
@@ -93,9 +96,7 @@ print('Getting data...')
 for page_num in range(num_pages):
     print('On page {}'.format(str(page_num + 1)))
     low_review_count = 0
-    r = requests.get(page_url)
-    save_html(r.content, 'page')
-    soup = BeautifulSoup(open_html('page'), 'html.parser')
+    soup = get_soup(page_url)
     if page_num != num_pages - 1:
         next_page = soup.select_one('.nav.next.taLnk.ui_button.primary')['href']
         page_url = 'https://www.tripadvisor.com.sg' + next_page
@@ -106,9 +107,7 @@ for page_num in range(num_pages):
     for row in rows:
         prop_urls.append('https://www.tripadvisor.com.sg' + row['href'])
     for prop in prop_urls:
-        r = requests.get(prop)
-        save_html(r.content, 'page')
-        soup = BeautifulSoup(open_html('page'), 'html.parser')
+        soup = get_soup(prop)
         try:
             num_reviews = int(soup.select_one('.reviewCount').text.strip().split(' ')[0].replace(',', ''))
         except AttributeError:
